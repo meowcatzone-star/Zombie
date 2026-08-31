@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Zombie Survivor: Last Days</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://yandex.ru/games/sdk/v2"></script>
+</head>
+<body>
+    <!-- Титульный экран -->
+    <div id="screen-title" class="screen active">
+        <div class="title-container">
+            <h1 class="game-title">ZOMBIE SURVIVOR</h1>
+            <h2 class="game-subtitle">Last Days</h2>
+            <div class="title-decoration">☠️</div>
+            <p class="title-description">Выживи в мире мёртвых. Каждый выбор имеет значение.</p>
+            <button id="btn-start" class="btn btn-primary btn-large">Начать выживание</button>
+            <button id="btn-continue" class="btn btn-secondary btn-large" style="display: none;">Продолжить</button>
+        </div>
+    </div>
+
+    <!-- Экран создания персонажа -->
+    <div id="screen-create" class="screen">
+        <div class="create-container">
+            <h2 class="section-title">Создание персонажа</h2>
+            
+            <!-- Имя -->
+            <div class="form-group">
+                <label for="char-name">Имя выжившего</label>
+                <input type="text" id="char-name" placeholder="Введите имя..." maxlength="20">
+            </div>
+
+            <!-- Возраст -->
+            <div class="form-group">
+                <label for="char-age">Возраст: <span id="age-value">25</span></label>
+                <input type="range" id="char-age" min="16" max="55" value="25">
+            </div>
+
+            <!-- Пол -->
+            <div class="form-group">
+                <label>Пол</label>
+                <div class="gender-buttons">
+                    <button class="btn btn-gender active" data-gender="male">М</button>
+                    <button class="btn btn-gender" data-gender="female">Ж</button>
+                </div>
+            </div>
+
+            <!-- Предыстория -->
+            <div class="form-group">
+                <label>Предыстория</label>
+                <div class="backstory-grid">
+                    <div class="backstory-card" data-backstory="loner">
+                        <div class="backstory-icon">🐕</div>
+                        <h4>Одиночка</h4>
+                        <p>+Скрытность, собака</p>
+                    </div>
+                    <div class="backstory-card" data-backstory="soldier">
+                        <div class="backstory-icon">🔫</div>
+                        <h4>Военный</h4>
+                        <p>+Стрельба, пистолет</p>
+                    </div>
+                    <div class="backstory-card" data-backstory="medic">
+                        <div class="backstory-icon">💊</div>
+                        <h4>Медик</h4>
+                        <p>+Медицина, аптечки</p>
+                    </div>
+                    <div class="backstory-card" data-backstory="engineer">
+                        <div class="backstory-icon">🔧</div>
+                        <h4>Инженер</h4>
+                        <p>+Крафт, инструменты</p>
+                    </div>
+                    <div class="backstory-card" data-backstory="refugee">
+                        <div class="backstory-icon">🎒</div>
+                        <h4>Беженец</h4>
+                        <p>+Выносливость, еда</p>
+                    </div>
+                    <div class="backstory-card" data-backstory="scientist">
+                        <div class="backstory-icon">📻</div>
+                        <h4>Учёный</h4>
+                        <p>+Знания, карта, рация</p>
+                    </div>
+                </div>
+            </div>
+
+            <button id="btn-create-confirm" class="btn btn-primary btn-large" disabled>Создать персонажа</button>
+        </div>
+    </div>
+
+    <!-- Основной игровой экран -->
+    <div id="screen-game" class="screen">
+        <!-- Верхняя панель статуса -->
+        <div class="status-panel">
+            <div class="status-bar">
+                <div class="status-label">❤️ Здоровье</div>
+                <div class="status-fill-container">
+                    <div id="status-health" class="status-fill health"></div>
+                </div>
+                <span id="health-value" class="status-value">100/100</span>
+            </div>
+            <div class="status-bar">
+                <div class="status-label">🍖 Голод</div>
+                <div class="status-fill-container">
+                    <div id="status-hunger" class="status-fill hunger"></div>
+                </div>
+                <span id="hunger-value" class="status-value">100</span>
+            </div>
+            <div class="status-bar">
+                <div class="status-label">💧 Жажда</div>
+                <div class="status-fill-container">
+                    <div id="status-thirst" class="status-fill thirst"></div>
+                </div>
+                <span id="thirst-value" class="status-value">100</span>
+            </div>
+            <div class="status-bar">
+                <div class="status-label">⚡ Выносливость</div>
+                <div class="status-fill-container">
+                    <div id="status-stamina" class="status-fill stamina"></div>
+                </div>
+                <span id="stamina-value" class="status-value">100</span>
+            </div>
+            <div class="status-bar">
+                <div class="status-label">😊 Настроение</div>
+                <div class="status-fill-container">
+                    <div id="status-morale" class="status-fill morale"></div>
+                </div>
+                <span id="morale-value" class="status-value">50</span>
+            </div>
+        </div>
+
+        <!-- Информация о дне и времени -->
+        <div class="time-panel">
+            <span id="day-display">День 1</span>
+            <span id="time-display">🌅 Утро</span>
+        </div>
+
+        <!-- Центральная карточка события -->
+        <div class="event-card">
+            <div id="event-content">
+                <h3 id="event-title">Добро пожаловать</h3>
+                <p id="event-description">Вы просыпаетесь в заброшенном доме. За окном тихо, но вы знаете — они где-то рядом. Нужно двигаться дальше.</p>
+            </div>
+        </div>
+
+        <!-- Лог событий -->
+        <div class="event-log">
+            <h4>📋 Журнал</h4>
+            <div id="log-container"></div>
+        </div>
+
+        <!-- Панель действий -->
+        <div class="action-panel">
+            <button id="btn-explore" class="btn btn-action">🔍 Исследовать</button>
+            <button id="btn-inventory" class="btn btn-action">🎒 Инвентарь</button>
+            <button id="btn-map" class="btn btn-action">🗺️ Карта</button>
+            <button id="btn-next-period" class="btn btn-action btn-primary">⏭️ Далее</button>
+        </div>
+    </div>
+
+    <!-- Экран смерти -->
+    <div id="screen-death" class="screen">
+        <div class="death-container">
+            <h1 class="death-title">ВЫ ПОГИБЛИ</h1>
+            <div class="death-icon">💀</div>
+            <p id="death-reason" class="death-reason">Причина смерти будет указана здесь</p>
+            <p class="death-stats">Вы прожили <span id="death-days">0</span> дн.</p>
+            <button id="btn-restart" class="btn btn-primary btn-large">Начать заново</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно инвентаря -->
+    <div id="modal-inventory" class="modal">
+        <div class="modal-content">
+            <h3>🎒 Инвентарь</h3>
+            <div id="inventory-list"></div>
+            <div class="resources-grid">
+                <div class="resource-item">
+                    <span>🍖 Еда:</span>
+                    <span id="res-food">0</span>
+                </div>
+                <div class="resource-item">
+                    <span>💧 Вода:</span>
+                    <span id="res-water">0</span>
+                </div>
+                <div class="resource-item">
+                    <span>💊 Лекарства:</span>
+                    <span id="res-medicine">0</span>
+                </div>
+                <div class="resource-item">
+                    <span>🔫 Патроны:</span>
+                    <span id="res-ammo">0</span>
+                </div>
+                <div class="resource-item">
+                    <span>🔧 Материалы:</span>
+                    <span id="res-materials">0</span>
+                </div>
+                <div class="resource-item">
+                    <span>⛽ Топливо:</span>
+                    <span id="res-fuel">0</span>
+                </div>
+            </div>
+            <button class="btn btn-secondary modal-close">Закрыть</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно карты -->
+    <div id="modal-map" class="modal">
+        <div class="modal-content">
+            <h3>🗺️ Карта региона</h3>
+            <div id="map-content">
+                <p>Карта будет отображена здесь</p>
+            </div>
+            <button class="btn btn-secondary modal-close">Закрыть</button>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
